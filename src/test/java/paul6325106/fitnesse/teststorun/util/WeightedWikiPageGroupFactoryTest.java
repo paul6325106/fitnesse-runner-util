@@ -5,8 +5,10 @@ import fitnesse.wiki.PageType;
 import fitnesse.wiki.WikiPage;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import paul6325106.fitnesse.teststorun.domain.SuiteSetUpTearDownPair;
 import paul6325106.fitnesse.teststorun.domain.WeightedWikiPage;
 import paul6325106.fitnesse.teststorun.domain.WeightedWikiPageGroup;
@@ -20,19 +22,20 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class WeightedWikiPageGroupFactoryTest {
 
     private WikiPage root;
-    private WeightedWikiPageGroupFactory factory;
 
     @Mock
     private WeightStrategy strategy;
 
+    @InjectMocks
+    private WeightedWikiPageGroupFactory factory;
+
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
         root = FitNesseUtil.makeTestContext().getRootPage();
-        factory = new WeightedWikiPageGroupFactory(strategy);
     }
 
     @Test
