@@ -10,8 +10,9 @@ public class WeightedWikiPageGroup {
     private final long pagesWeight;
     private final long totalWeight;
 
-    public WeightedWikiPageGroup(final SuiteSetUpTearDownPair suiteSetUpTearDownPair, final List<WeightedWikiPage> wikiPages,
-            final long setUpWeight, final long tearDownWeight, final long pagesWeight) {
+    public WeightedWikiPageGroup(final SuiteSetUpTearDownPair suiteSetUpTearDownPair,
+            final List<WeightedWikiPage> wikiPages, final long setUpWeight, final long tearDownWeight,
+            final long pagesWeight) {
 
         this.suiteSetUpTearDownPair = suiteSetUpTearDownPair;
         this.wikiPages = wikiPages;
@@ -44,4 +45,17 @@ public class WeightedWikiPageGroup {
     public long getTotalWeight() {
         return totalWeight;
     }
+
+    @Override
+    public String toString() {
+        return "WeightedWikiPageGroup{" +
+                "suiteSetUpTearDownPair=" + suiteSetUpTearDownPair +
+                ", wikiPages=" + wikiPages +
+                ", setUpWeight=" + setUpWeight +
+                ", tearDownWeight=" + tearDownWeight +
+                ", pagesWeight=" + pagesWeight +
+                ", totalWeight=" + totalWeight +
+                '}';
+    }
+
 }
