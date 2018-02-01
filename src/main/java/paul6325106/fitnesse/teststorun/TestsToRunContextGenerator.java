@@ -8,9 +8,6 @@ import paul6325106.fitnesse.teststorun.domain.WeightedWikiPage;
 import paul6325106.fitnesse.teststorun.domain.WeightedWikiPageGroup;
 import paul6325106.fitnesse.teststorun.exception.TestsToRunContextGeneratorException;
 import paul6325106.fitnesse.teststorun.partition.PartitionStrategy;
-import paul6325106.fitnesse.teststorun.util.LowestCommonRootFinder;
-import paul6325106.fitnesse.teststorun.util.SuiteSetUpTearDownMapper;
-import paul6325106.fitnesse.teststorun.util.WeightedWikiPageGroupFactory;
 import paul6325106.fitnesse.teststorun.weight.WeightStrategy;
 
 import java.util.ArrayList;

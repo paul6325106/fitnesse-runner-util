@@ -1,4 +1,4 @@
-package paul6325106.fitnesse.teststorun.util;
+package paul6325106.fitnesse.teststorun;
 
 import fitnesse.testutil.FitNesseUtil;
 import fitnesse.wiki.PageType;
@@ -6,8 +6,10 @@ import fitnesse.wiki.WikiPage;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import paul6325106.fitnesse.teststorun.LowestCommonRootFinder;
 import paul6325106.fitnesse.teststorun.exception.TestsToRunContextGeneratorException;
 import paul6325106.fitnesse.teststorun.exception.TestsToRunContextGeneratorReason;
+import paul6325106.fitnesse.util.WikiPageUtil;
 
 import java.util.Arrays;
 import java.util.Collections;

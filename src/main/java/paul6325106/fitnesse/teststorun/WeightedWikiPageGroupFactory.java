@@ -1,4 +1,4 @@
-package paul6325106.fitnesse.teststorun.util;
+package paul6325106.fitnesse.teststorun;
 
 import fitnesse.wiki.WikiPage;
 import paul6325106.fitnesse.teststorun.domain.SuiteSetUpTearDownPair;
@@ -6,6 +6,7 @@ import paul6325106.fitnesse.teststorun.domain.WeightedWikiPage;
 import paul6325106.fitnesse.teststorun.domain.WeightedWikiPageGroup;
 import paul6325106.fitnesse.teststorun.exception.TestsToRunContextGeneratorException;
 import paul6325106.fitnesse.teststorun.weight.WeightStrategy;
+import paul6325106.fitnesse.util.WikiPageUtil;
 
 import java.util.ArrayList;
 import java.util.List;

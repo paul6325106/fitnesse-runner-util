@@ -1,4 +1,4 @@
-package paul6325106.fitnesse.teststorun.util;
+package paul6325106.fitnesse.teststorun;
 
 import fitnesse.testutil.FitNesseUtil;
 import fitnesse.wiki.PageType;
@@ -14,8 +14,8 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static paul6325106.fitnesse.teststorun.util.WikiPageUtil.addPage;
-import static paul6325106.fitnesse.teststorun.util.WikiPageUtil.getFullPathName;
+import static paul6325106.fitnesse.util.WikiPageUtil.addPage;
+import static paul6325106.fitnesse.util.WikiPageUtil.getFullPathName;
 
 public class SuiteSetUpTearDownMapperTest {
 

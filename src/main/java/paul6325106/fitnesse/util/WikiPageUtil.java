@@ -1,4 +1,4 @@
-package paul6325106.fitnesse.teststorun.util;
+package paul6325106.fitnesse.util;
 
 import fitnesse.wiki.PageData;
 import fitnesse.wiki.PageType;

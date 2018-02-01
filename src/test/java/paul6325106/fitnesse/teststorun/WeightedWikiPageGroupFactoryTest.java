@@ -1,4 +1,4 @@
-package paul6325106.fitnesse.teststorun.util;
+package paul6325106.fitnesse.teststorun;
 
 import fitnesse.testutil.FitNesseUtil;
 import fitnesse.wiki.PageType;
@@ -13,6 +13,7 @@ import paul6325106.fitnesse.teststorun.domain.SuiteSetUpTearDownPair;
 import paul6325106.fitnesse.teststorun.domain.WeightedWikiPage;
 import paul6325106.fitnesse.teststorun.domain.WeightedWikiPageGroup;
 import paul6325106.fitnesse.teststorun.weight.WeightStrategy;
+import paul6325106.fitnesse.util.WikiPageUtil;
 
 import java.util.Arrays;
 import java.util.HashMap;

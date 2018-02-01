@@ -1,4 +1,4 @@
-package paul6325106.fitnesse.teststorun.util;
+package paul6325106.fitnesse.teststorun;
 
 import fitnesse.wiki.PageCrawler;
 import fitnesse.wiki.PageData;
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static paul6325106.fitnesse.teststorun.util.WikiPageUtil.getFullPathName;
+import static paul6325106.fitnesse.util.WikiPageUtil.getFullPathName;
 
 /**
  * Maps WikiPages to their SuiteSetUp/SuiteTearDown pairs.
