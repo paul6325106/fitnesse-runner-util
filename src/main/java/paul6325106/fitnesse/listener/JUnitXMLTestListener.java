@@ -85,12 +85,10 @@ public class JUnitXMLTestListener implements TestSystemListener {
 
     @Override
     public void testSystemStopped(final TestSystem testSystem, final Throwable cause) {
-        // TODO handle cause
-
         totalTimeMeasurement.stop();
 
-        final String resultXml = getTestsuiteXml(suiteName, totalTimeMeasurement.elapsedSeconds());
-
+        final String errorXml = getErrorXml(cause);
+        final String resultXml = getTestsuiteXml(suiteName, totalTimeMeasurement.elapsedSeconds(), errorXml);
         final String finalPath = new File(outputDir, "TEST-" + suiteName + ".xml").getAbsolutePath();
 
         try {
@@ -112,23 +110,23 @@ public class JUnitXMLTestListener implements TestSystemListener {
 
     private String getTestcaseXml(final TestSummary testSummary, final String testName, final double executionSeconds) {
         final StringBuilder testcase = new StringBuilder();
-        testcase.append("<testcase classname=\"").append(testName).append("\"");
+        testcase.append("\t<testcase classname=\"").append(testName).append("\"");
         testcase.append(" time=\"").append(executionSeconds).append("\"");
         testcase.append(" name=\"").append(testName).append("\">\n");
 
         if (testSummary.getExceptions() + testSummary.getWrong() > 0) {
-            testcase.append("<failure type=\"java.lang.AssertionError\" message=\"");
+            testcase.append("\t\t<failure type=\"java.lang.AssertionError\" message=\"");
             testcase.append(" exceptions: ").append(getErrors(testSummary));
             testcase.append(" wrong: ").append(getFailures(testSummary));
             testcase.append("\">");
             testcase.append("</failure>\n");
         }
 
-        testcase.append("</testcase>\n");
+        testcase.append("\t</testcase>\n");
         return testcase.toString();
     }
 
-    private String getTestsuiteXml(final String suiteName, final double totalExecutionSeconds) {
+    private String getTestsuiteXml(final String suiteName, final double totalExecutionSeconds, final String errorXml) {
         final StringBuilder resultXml = new StringBuilder();
 
         resultXml.append("<testsuite errors=\"").append(errors).append("\"");
@@ -138,15 +136,21 @@ public class JUnitXMLTestListener implements TestSystemListener {
         resultXml.append(" failures=\"").append(failures).append("\"");
         resultXml.append(" name=\"").append(suiteName).append("\">\n");
 
-        resultXml.append("<properties></properties>\n");
+        resultXml.append("\t<properties></properties>\n");
 
         for (final String testcaseXml : testcaseXmls.values()) {
             resultXml.append(testcaseXml);
         }
 
+        resultXml.append(errorXml);
+
         resultXml.append("</testsuite>\n");
 
         return resultXml.toString();
+    }
+
+    private String getErrorXml(final Throwable throwable) {
+        return throwable == null ? "" : String.format("\t<error>%s</error>\n", throwable.toString());
     }
 
 }

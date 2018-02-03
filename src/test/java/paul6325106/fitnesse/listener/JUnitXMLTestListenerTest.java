@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class JunitXmlTestListenerTest {
+public class JUnitXMLTestListenerTest {
 
     private static final String SUITE_NAME = "ThisIsThe.SuiteBeingRun";
     private static final String START_TIME = "11:12:13";
@@ -46,7 +46,7 @@ public class JunitXmlTestListenerTest {
     }
 
     @Test
-    public void testListener() throws IOException {
+    public void testSuccessfulExecution() throws IOException {
         final TestPage testPageOne = mock(TestPage.class);
         when(testPageOne.getFullPath()).thenReturn(SUITE_NAME + ".TestPageOne");
 
@@ -77,15 +77,40 @@ public class JunitXmlTestListenerTest {
         listener.testSystemStopped(null, null);
 
         final String expected = "<testsuite errors=\"1\" skipped=\"0\" tests=\"3\" time=\"31.108\" failures=\"1\" name=\"ThisIsThe.SuiteBeingRun\">\n" +
-                "<properties></properties>\n" +
-                "<testcase classname=\"ThisIsThe.SuiteBeingRun.TestPageOne\" time=\"6.666\" name=\"ThisIsThe.SuiteBeingRun.TestPageOne\">\n" +
-                "</testcase>\n" +
-                "<testcase classname=\"ThisIsThe.SuiteBeingRun.TestPageTwo\" time=\"4.444\" name=\"ThisIsThe.SuiteBeingRun.TestPageTwo\">\n" +
-                "<failure type=\"java.lang.AssertionError\" message=\" exceptions: 0 wrong: 1\"></failure>\n" +
-                "</testcase>\n" +
-                "<testcase classname=\"ThisIsThe.SuiteBeingRun.TestPageThree\" time=\"2.222\" name=\"ThisIsThe.SuiteBeingRun.TestPageThree\">\n" +
-                "<failure type=\"java.lang.AssertionError\" message=\" exceptions: 1 wrong: 0\"></failure>\n" +
-                "</testcase>\n" +
+                "\t<properties></properties>\n" +
+                "\t<testcase classname=\"ThisIsThe.SuiteBeingRun.TestPageOne\" time=\"6.666\" name=\"ThisIsThe.SuiteBeingRun.TestPageOne\">\n" +
+                "\t</testcase>\n" +
+                "\t<testcase classname=\"ThisIsThe.SuiteBeingRun.TestPageTwo\" time=\"4.444\" name=\"ThisIsThe.SuiteBeingRun.TestPageTwo\">\n" +
+                "\t\t<failure type=\"java.lang.AssertionError\" message=\" exceptions: 0 wrong: 1\"></failure>\n" +
+                "\t</testcase>\n" +
+                "\t<testcase classname=\"ThisIsThe.SuiteBeingRun.TestPageThree\" time=\"2.222\" name=\"ThisIsThe.SuiteBeingRun.TestPageThree\">\n" +
+                "\t\t<failure type=\"java.lang.AssertionError\" message=\" exceptions: 1 wrong: 0\"></failure>\n" +
+                "\t</testcase>\n" +
+                "</testsuite>\n";
+
+        assertEquals(expected, getXmlResult());
+    }
+
+    @Test
+    public void testFailedExecution() throws IOException {
+        final TestPage testPage = mock(TestPage.class);
+        when(testPage.getFullPath()).thenReturn(SUITE_NAME + ".TestPage");
+
+        final TestSummary testSummary = new TestSummary(10, 0, 0, 0);
+
+        listener.testSystemStarted(null);
+        clock.elapse(10000);
+        listener.testStarted(testPage);
+        clock.elapse(10000);
+        listener.testComplete(testPage, testSummary);
+        clock.elapse(10000);
+        listener.testSystemStopped(null, new RuntimeException("this is the exception message"));
+
+        final String expected = "<testsuite errors=\"0\" skipped=\"0\" tests=\"1\" time=\"30.0\" failures=\"0\" name=\"ThisIsThe.SuiteBeingRun\">\n" +
+                "\t<properties></properties>\n" +
+                "\t<testcase classname=\"ThisIsThe.SuiteBeingRun.TestPage\" time=\"10.0\" name=\"ThisIsThe.SuiteBeingRun.TestPage\">\n" +
+                "\t</testcase>\n" +
+                "\t<error>java.lang.RuntimeException: this is the exception message</error>\n" +
                 "</testsuite>\n";
 
         assertEquals(expected, getXmlResult());
@@ -96,7 +121,5 @@ public class JunitXmlTestListenerTest {
         final File file = new File(outputDir, name);
         return new String(Files.readAllBytes(file.toPath()));
     }
-
-    // TODO test case for when testSystemStopped by throwable
 
 }
