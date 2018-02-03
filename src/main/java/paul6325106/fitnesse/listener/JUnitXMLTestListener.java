@@ -138,11 +138,11 @@ public class JUnitXMLTestListener implements TestSystemListener {
 
         resultXml.append("\t<properties></properties>\n");
 
+        resultXml.append(errorXml);
+
         for (final String testcaseXml : testcaseXmls.values()) {
             resultXml.append(testcaseXml);
         }
-
-        resultXml.append(errorXml);
 
         resultXml.append("</testsuite>\n");
 
