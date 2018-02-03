@@ -22,7 +22,7 @@ public class JUnitXMLTestListener implements TestSystemListener {
     private static final Logger LOG = LoggerFactory.getLogger(JUnitXMLTestListener.class);
 
     private final String suiteName;
-    private final String outputPath;
+    private final File outputDir;
 
     private final Map<String, TimeMeasurement> timeMeasurements;
     private final Map<String, String> testcaseXmls;
@@ -30,17 +30,17 @@ public class JUnitXMLTestListener implements TestSystemListener {
     private TimeMeasurement totalTimeMeasurement;
     private int failures;
     private int errors;
+    private int testCount;
 
-    public JUnitXMLTestListener(final String suiteName, final String outputPath) {
+    public JUnitXMLTestListener(final String suiteName, final File outputDir) {
         this.suiteName = suiteName;
-        this.outputPath=outputPath;
+        this.outputDir = outputDir;
 
         timeMeasurements = new HashMap<>();
         testcaseXmls = new HashMap<>();
         failures = 0;
         errors = 0;
-
-        new File(outputPath).mkdirs();
+        testCount = 0;
     }
 
     @Override
@@ -70,26 +70,28 @@ public class JUnitXMLTestListener implements TestSystemListener {
         final String testName = testPage.getFullPath();
         final TimeMeasurement timeMeasurement = timeMeasurements.get(testName);
         timeMeasurement.stop();
-        final long executionTime = timeMeasurement.elapsed();
 
         errors += getErrors(testSummary);
         failures += getFailures(testSummary);
+        testCount++;
 
-        testcaseXmls.put(testName, getTestcaseXml(testSummary, testName, executionTime));
+        testcaseXmls.put(testName, getTestcaseXml(testSummary, testName, timeMeasurement.elapsedSeconds()));
     }
 
     @Override
     public void testSystemStarted(final TestSystem testSystem) {
-        this.totalTimeMeasurement = new TimeMeasurement().start();
+        totalTimeMeasurement = new TimeMeasurement().start();
     }
 
     @Override
     public void testSystemStopped(final TestSystem testSystem, final Throwable cause) {
+        // TODO handle cause
+
         totalTimeMeasurement.stop();
 
-        final String resultXml = getTestsuiteXml(suiteName, totalTimeMeasurement.elapsed());
+        final String resultXml = getTestsuiteXml(suiteName, totalTimeMeasurement.elapsedSeconds());
 
-        final String finalPath = new File(outputPath, "TEST-" + suiteName + ".xml").getAbsolutePath();
+        final String finalPath = new File(outputDir, "TEST-" + suiteName + ".xml").getAbsolutePath();
 
         try {
             final FileWriter fw = new FileWriter(finalPath);
@@ -108,41 +110,41 @@ public class JUnitXMLTestListener implements TestSystemListener {
         return testSummary.getWrong() > 0 ? 1 : 0;
     }
 
-    private String getTestcaseXml(final TestSummary testSummary, final String testName, final long executionTime) {
+    private String getTestcaseXml(final TestSummary testSummary, final String testName, final double executionSeconds) {
         final StringBuilder testcase = new StringBuilder();
         testcase.append("<testcase classname=\"").append(testName).append("\"");
-        testcase.append(" time=\"").append(executionTime / 1000d).append("\"");
-        testcase.append(" name=\"").append(testName).append("\">");
+        testcase.append(" time=\"").append(executionSeconds).append("\"");
+        testcase.append(" name=\"").append(testName).append("\">\n");
 
-        if (testSummary.getExceptions() + testSummary.getWrong() == 0) {
+        if (testSummary.getExceptions() + testSummary.getWrong() > 0) {
             testcase.append("<failure type=\"java.lang.AssertionError\" message=\"");
             testcase.append(" exceptions: ").append(getErrors(testSummary));
             testcase.append(" wrong: ").append(getFailures(testSummary));
             testcase.append("\">");
-            testcase.append("</failure>");
+            testcase.append("</failure>\n");
         }
 
-        testcase.append("</testcase>");
+        testcase.append("</testcase>\n");
         return testcase.toString();
     }
 
-    private String getTestsuiteXml(final String suiteName, final long totalExecutionTime) {
+    private String getTestsuiteXml(final String suiteName, final double totalExecutionSeconds) {
         final StringBuilder resultXml = new StringBuilder();
 
         resultXml.append("<testsuite errors=\"").append(errors).append("\"");
         resultXml.append(" skipped=\"0\"");
-        resultXml.append(" tests=\"1\"");
-        resultXml.append(" time=\"").append(totalExecutionTime / 1000d).append("\"");
+        resultXml.append(" tests=\"").append(testCount).append("\"");
+        resultXml.append(" time=\"").append(totalExecutionSeconds).append("\"");
         resultXml.append(" failures=\"").append(failures).append("\"");
-        resultXml.append(" name=\"").append(suiteName).append("\">");
+        resultXml.append(" name=\"").append(suiteName).append("\">\n");
 
-        resultXml.append("<properties></properties>");
+        resultXml.append("<properties></properties>\n");
 
         for (final String testcaseXml : testcaseXmls.values()) {
             resultXml.append(testcaseXml);
         }
 
-        resultXml.append("</testsuite>");
+        resultXml.append("</testsuite>\n");
 
         return resultXml.toString();
     }
