@@ -108,9 +108,9 @@ public class JUnitXMLTestListenerTest {
 
         final String expected = "<testsuite errors=\"0\" skipped=\"0\" tests=\"1\" time=\"30.0\" failures=\"0\" name=\"ThisIsThe.SuiteBeingRun\">\n" +
                 "\t<properties></properties>\n" +
+                "\t<error>java.lang.RuntimeException: this is the exception message</error>\n" +
                 "\t<testcase classname=\"ThisIsThe.SuiteBeingRun.TestPage\" time=\"10.0\" name=\"ThisIsThe.SuiteBeingRun.TestPage\">\n" +
                 "\t</testcase>\n" +
-                "\t<error>java.lang.RuntimeException: this is the exception message</error>\n" +
                 "</testsuite>\n";
 
         assertEquals(expected, getXmlResult());
