@@ -6,7 +6,6 @@ import fitnesse.wiki.WikiPage;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import paul6325106.fitnesse.teststorun.LowestCommonRootFinder;
 import paul6325106.fitnesse.teststorun.exception.TestsToRunContextGeneratorException;
 import paul6325106.fitnesse.teststorun.exception.TestsToRunContextGeneratorReason;
 import paul6325106.fitnesse.util.WikiPageUtil;
