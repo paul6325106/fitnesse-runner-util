@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -27,6 +29,7 @@ public class JUnitXMLTestListenerTest {
     private static final String START_TIME = "11:12:13";
 
     private File outputDir;
+    private Map<String, String> properties;
     private TestSystemListener listener;
     private DateAlteringClock clock;
 
@@ -36,7 +39,8 @@ public class JUnitXMLTestListenerTest {
     @Before
     public void setUp() throws ParseException, IOException {
         outputDir = temporaryFolder.newFolder("fitnesse-xml-results");
-        listener = new JUnitXMLTestListener(SUITE_NAME, outputDir);
+        properties = new HashMap<>();
+        listener = new JUnitXMLTestListener(SUITE_NAME, outputDir, properties);
         clock = new DateAlteringClock(new SimpleDateFormat("HH:mm:ss").parse(START_TIME)).freeze();
     }
 
@@ -109,6 +113,36 @@ public class JUnitXMLTestListenerTest {
         final String expected = "<testsuite errors=\"0\" skipped=\"0\" tests=\"1\" time=\"30.0\" failures=\"0\" name=\"ThisIsThe.SuiteBeingRun\">\n" +
                 "\t<properties></properties>\n" +
                 "\t<error>java.lang.RuntimeException: this is the exception message</error>\n" +
+                "\t<testcase classname=\"ThisIsThe.SuiteBeingRun.TestPage\" time=\"10.0\" name=\"ThisIsThe.SuiteBeingRun.TestPage\">\n" +
+                "\t</testcase>\n" +
+                "</testsuite>\n";
+
+        assertEquals(expected, getXmlResult());
+    }
+
+    @Test
+    public void testProperties() throws IOException {
+        properties.put("Apple", "Banana");
+        properties.put("Cat", "Dog");
+
+        final TestPage testPage = mock(TestPage.class);
+        when(testPage.getFullPath()).thenReturn(SUITE_NAME + ".TestPage");
+
+        final TestSummary testSummary = new TestSummary(10, 0, 0, 0);
+
+        listener.testSystemStarted(null);
+        clock.elapse(10000);
+        listener.testStarted(testPage);
+        clock.elapse(10000);
+        listener.testComplete(testPage, testSummary);
+        clock.elapse(10000);
+        listener.testSystemStopped(null, null);
+
+        final String expected = "<testsuite errors=\"0\" skipped=\"0\" tests=\"1\" time=\"30.0\" failures=\"0\" name=\"ThisIsThe.SuiteBeingRun\">\n" +
+                "\t<properties>\n" +
+                "\t\t<property name=\"Apple\" value=\"Banana\" />\n" +
+                "\t\t<property name=\"Cat\" value=\"Dog\" />\n" +
+                "\t</properties>\n" +
                 "\t<testcase classname=\"ThisIsThe.SuiteBeingRun.TestPage\" time=\"10.0\" name=\"ThisIsThe.SuiteBeingRun.TestPage\">\n" +
                 "\t</testcase>\n" +
                 "</testsuite>\n";

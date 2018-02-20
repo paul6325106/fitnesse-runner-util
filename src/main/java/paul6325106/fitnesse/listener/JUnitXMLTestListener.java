@@ -23,6 +23,7 @@ public class JUnitXMLTestListener implements TestSystemListener {
 
     private final String suiteName;
     private final File outputDir;
+    private final Map<String, String> testsuiteProperties;
 
     private final Map<String, TimeMeasurement> timeMeasurements;
     private final Map<String, String> testcaseXmls;
@@ -32,9 +33,12 @@ public class JUnitXMLTestListener implements TestSystemListener {
     private int errors;
     private int testCount;
 
-    public JUnitXMLTestListener(final String suiteName, final File outputDir) {
+    public JUnitXMLTestListener(final String suiteName, final File outputDir,
+            final Map<String, String> testsuiteProperties) {
+
         this.suiteName = suiteName;
         this.outputDir = outputDir;
+        this.testsuiteProperties = testsuiteProperties;
 
         timeMeasurements = new HashMap<>();
         testcaseXmls = new HashMap<>();
@@ -50,12 +54,12 @@ public class JUnitXMLTestListener implements TestSystemListener {
 
     @Override
     public void testAssertionVerified(final Assertion assertion, final TestResult testResult) {
-        // ignored
+        // TODO would be very useful to identify failures
     }
 
     @Override
     public void testExceptionOccurred(final Assertion assertion, final ExceptionResult exceptionResult) {
-        // ignored
+        // TODO would be very useful to identify errors
     }
 
     @Override
@@ -87,12 +91,11 @@ public class JUnitXMLTestListener implements TestSystemListener {
     public void testSystemStopped(final TestSystem testSystem, final Throwable cause) {
         totalTimeMeasurement.stop();
 
-        final String errorXml = getErrorXml(cause);
-        final String resultXml = getTestsuiteXml(suiteName, totalTimeMeasurement.elapsedSeconds(), errorXml);
-        final String finalPath = new File(outputDir, "TEST-" + suiteName + ".xml").getAbsolutePath();
+        final String resultXml = getTestsuiteXml(suiteName, totalTimeMeasurement.elapsedSeconds(), cause);
+        final File file = new File(outputDir, "TEST-" + suiteName + ".xml");
 
         try {
-            final FileWriter fw = new FileWriter(finalPath);
+            final FileWriter fw = new FileWriter(file);
             fw.write(resultXml);
             fw.close();
         } catch (final IOException e) {
@@ -126,7 +129,7 @@ public class JUnitXMLTestListener implements TestSystemListener {
         return testcase.toString();
     }
 
-    private String getTestsuiteXml(final String suiteName, final double totalExecutionSeconds, final String errorXml) {
+    private String getTestsuiteXml(final String suiteName, final double totalExecutionSeconds, final Throwable cause) {
         final StringBuilder resultXml = new StringBuilder();
 
         resultXml.append("<testsuite errors=\"").append(errors).append("\"");
@@ -136,9 +139,8 @@ public class JUnitXMLTestListener implements TestSystemListener {
         resultXml.append(" failures=\"").append(failures).append("\"");
         resultXml.append(" name=\"").append(suiteName).append("\">\n");
 
-        resultXml.append("\t<properties></properties>\n");
-
-        resultXml.append(errorXml);
+        resultXml.append(getPropertiesXml(testsuiteProperties));
+        resultXml.append(getErrorXml(cause));
 
         for (final String testcaseXml : testcaseXmls.values()) {
             resultXml.append(testcaseXml);
@@ -147,6 +149,28 @@ public class JUnitXMLTestListener implements TestSystemListener {
         resultXml.append("</testsuite>\n");
 
         return resultXml.toString();
+    }
+
+    private String getPropertiesXml(final Map<String, String> properties) {
+        if (properties.isEmpty()) {
+            return "\t<properties></properties>\n";
+        }
+
+        final StringBuilder propertiesXml = new StringBuilder();
+
+        propertiesXml.append("\t<properties>\n");
+
+        for (final Map.Entry<String, String> property : properties.entrySet()) {
+            propertiesXml.append("\t\t<property name=\"");
+            propertiesXml.append(property.getKey());
+            propertiesXml.append("\" value=\"");
+            propertiesXml.append(property.getValue());
+            propertiesXml.append("\" />\n");
+        }
+
+        propertiesXml.append("\t</properties>\n");
+
+        return propertiesXml.toString();
     }
 
     private String getErrorXml(final Throwable throwable) {
