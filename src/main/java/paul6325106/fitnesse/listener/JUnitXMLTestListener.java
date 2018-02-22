@@ -152,7 +152,9 @@ public class JUnitXMLTestListener implements TestSystemListener {
             message = testResult.getMessage();
         }
 
-        firstTestFailure = new TestFailure(message, null, ExecutionResult.FAIL);
+        if (message != null && !message.isEmpty()) {
+            firstTestFailure = new TestFailure(message, null, ExecutionResult.FAIL);
+        }
     }
 
     @Override
