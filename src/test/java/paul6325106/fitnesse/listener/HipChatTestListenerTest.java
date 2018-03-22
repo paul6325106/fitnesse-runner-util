@@ -30,9 +30,9 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class HipChatFormatterTest {
+public class HipChatTestListenerTest {
 
-    private HipChatFormatter hipChatFormatter;
+    private HipChatTestListener hipChatFormatter;
     private String authKey = "some auth key";
 
     @Mock
@@ -43,7 +43,7 @@ public class HipChatFormatterTest {
 
     @Before
     public void setUp() throws Exception {
-        hipChatFormatter = new HipChatFormatter(client, "http://www.someurl.com/", authKey);
+        hipChatFormatter = new HipChatTestListener(client, "http://www.someurl.com/", authKey);
 
         when(client.execute(any(HttpPost.class))).thenReturn(response);
         when(response.getStatusLine()).thenReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, 200, null));

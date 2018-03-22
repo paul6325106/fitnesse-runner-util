@@ -21,15 +21,15 @@ import java.io.IOException;
 /**
  * Reports test completion to a HipChat room.
  */
-public class HipChatFormatter implements TestSystemListener {
+public class HipChatTestListener implements TestSystemListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HipChatFormatter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HipChatTestListener.class);
 
     private final HttpClient client;
     private final String roomNotificationUrl;
     private final String authKey;
 
-    public HipChatFormatter(final HttpClient client, final String roomNotificationUrl, final String authKey) {
+    public HipChatTestListener(final HttpClient client, final String roomNotificationUrl, final String authKey) {
         this.client = client;
         this.roomNotificationUrl = roomNotificationUrl;
         this.authKey = authKey;
